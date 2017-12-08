@@ -149,7 +149,7 @@ public class P6 {
 		if (ErrMsg.getErr()) {  
 			return P6.RESULT_SYNTAX_ERROR;
 		}
-		Codegen.p = outfile;
+		Codegen.p = outFile;
 		astRoot.codeGen();
 		
 		astRoot.unparse(outFile, 0);
