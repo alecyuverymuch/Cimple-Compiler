@@ -554,7 +554,7 @@ class VarDeclNode extends DeclNode {
     public void codeGen(){
         boolean isLocal = myId.isLocal();
         if (!isLocal){
-            Codegen.generate(".data");
+            Codegen.generateWithComment(".data", "Declare global var");
             Codegen.generate(".align 2");
             Codegen.generate("_" + myId.name() + ": .space 4");
         }
