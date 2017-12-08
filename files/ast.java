@@ -147,8 +147,6 @@ class ProgramNode extends ASTnode {
      */
     public void codeGen(){
         myDeclList.codeGen();
-        Codegen.generate("li", "$v0", "10");
-        Codegen.generateWithComment("syscall", "Exit the program");
     }
     
     public void unparse(PrintWriter p, int indent) {
@@ -665,9 +663,9 @@ class FnDeclNode extends DeclNode {
     }
 
     public void codeGen(){
-        Codegen.generateLabeled(myId.name(), "", "Generate function: " + myId.name());
+        Codegen.generateLabel(myId.name(), "Generate function: " + myId.name());
         if(myId.name().equals("main")){
-            Codegen.generateLabeled("__start", "", "");
+            Codegen.generateLabel("__start");
         }
         Codegen.generateWithComment("", "Begin function preamble");
         Codegen.genPush("$ra");
@@ -678,6 +676,19 @@ class FnDeclNode extends DeclNode {
             Codegen.generateWithComment("subu", "Push space for locals", "$sp", "$sp", Integer.toString(size));            
         }
         myBody.codeGen();
+        Codegen.generateWithComment("", "Begin function epilogue");
+        Codegen.generateLabel(Codegen.nextLabel());
+        Codegen.generateWithComment("lw", "load return address", "$ra", "0($fp)");
+        Codegen.generateWithComment("move", "hold the FP", "$t0", "$fp");
+        Codegen.generateWithComment("lw", "restore FP", "$fp", "-4($fp)");
+        Codegen.generateWithComment("move", "restore SP", "$sp", "$t0");
+        if (!myId.name().equals("main")){
+            Codegen.generateWithComment("jr", "return", "$ra");
+        }
+        else{
+            Codegen.generate("li", "$v0", "10");
+            Codegen.generateWithComment("syscall", "Exit the program");
+        }
     }
         
     public void unparse(PrintWriter p, int indent) {
