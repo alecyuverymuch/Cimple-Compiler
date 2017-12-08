@@ -145,7 +145,7 @@ class ProgramNode extends ASTnode {
     /**
      * codeGen
      */
-    public codeGen(){
+    public void codeGen(){
         myDeclList.codeGen();
         Codegen.generate("li", "$v0", "10");
         Codegen.generateWithComment("syscall", "Exit the program");
