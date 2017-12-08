@@ -686,8 +686,8 @@ class FnDeclNode extends DeclNode {
             Codegen.generateWithComment("jr", "return", "$ra");
         }
         else{
-            Codegen.generate("li", "$v0", "10");
-            Codegen.generateWithComment("syscall", "Exit the program");
+            Codegen.generateWithComment("li", "Exit the program", "$v0", "10");
+            Codegen.generate("syscall");
         }
     }
         
