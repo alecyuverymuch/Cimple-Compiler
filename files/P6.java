@@ -155,7 +155,7 @@ public class P6 {
 		astRoot.codeGen();
 		Codegen.p.close();
 		
-		astRoot.unparse(outFile, 0);
+		//astRoot.unparse(outFile, 0);
 		return P6.RESULT_CORRECT;
 	}
 	
