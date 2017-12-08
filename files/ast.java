@@ -141,6 +141,15 @@ class ProgramNode extends ASTnode {
     public void typeCheck() {
         myDeclList.typeCheck();
     }
+
+    /**
+     * codeGen
+     */
+    public codeGen(){
+        myDeclList.codeGen();
+        Codegen.generate("li", "$v0", "10");
+        Codegen.generateWithComment("syscall", "Exit the program");
+    }
     
     public void unparse(PrintWriter p, int indent) {
         myDeclList.unparse(p, indent);
