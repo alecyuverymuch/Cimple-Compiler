@@ -674,7 +674,9 @@ class FnDeclNode extends DeclNode {
         Codegen.genPush("$fp");
         Codegen.generateWithComment("addu", "Set the FP", "$fp", "$sp", "8");
         int size = ((FnSym)myId.sym()).getParamSize() + ((FnSym)myId.sym()).getVarSize();
-        Codegen.generateWithComment("subu", "Push space for locals", "$sp", "$sp", Integer.toString(size));
+        if (size > 0){
+            Codegen.generateWithComment("subu", "Push space for locals", "$sp", "$sp", Integer.toString(size));            
+        }
         myBody.codeGen();
     }
         
@@ -818,7 +820,7 @@ class StructDeclNode extends DeclNode {
     }  
     
     public void codeGen(){
-        
+
     }
     
     public void unparse(PrintWriter p, int indent) {
