@@ -653,8 +653,8 @@ class FnDeclNode extends DeclNode {
     }
 
     public void codeGen(){
-        Codegen.generateLabeled(myId.getName(), "", "Generate function: " + myId.getName());
-        if(myId.getName().equals("main")){
+        Codegen.generateLabeled(myId.name(), "", "Generate function: " + myId.name());
+        if(myId.name().equals("main")){
             Codegen.generateLabeled("__start", "", "");
         }
         Codegen.generateWithComment("", "Begin function preamble");
