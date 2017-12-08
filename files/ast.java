@@ -555,7 +555,7 @@ class VarDeclNode extends DeclNode {
         boolean isLocal = myId.isLocal();
         if (!isLocal){
             Codegen.generate(".data");
-            Codegen.generate(".align", "2");
+            Codegen.generate(".align 2");
             Codegen.generate("_" + myId.name() + ": .space 4");
         }
         else{
