@@ -54,11 +54,11 @@ class FnSym extends SemSym {
     }
 
     public void setVarSize(int varSize){
-	this.varSize = varSize;
+	    this.varSize = varSize;
     }
 
     public int getVarSize(){
-	return varSize;
+	    return varSize;
     }
 
     public void setParamSize(int paramSize){
@@ -66,7 +66,7 @@ class FnSym extends SemSym {
     }
 
     public int getParamSize(){
-	return paramSize; 
+	    return paramSize; 
     }
     
     public Type getReturnType() {

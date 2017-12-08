@@ -173,17 +173,17 @@ class DeclListNode extends ASTnode {
     }
     
     public int setOffset(int startOffset){
-	int totalOffset = 0;	
-	Iterator it = myDecls.iterator();
-	while(it.hasNext()){
-	    DeclNode node = ((DeclNode)it.next());
-	    if (node instanceof VarDeclNode) { //only works for vardeclNodes to start
+        int totalOffset = 0;	
+        Iterator it = myDecls.iterator();
+        while(it.hasNext()){
+            DeclNode node = ((DeclNode)it.next());
+            if (node instanceof VarDeclNode) { //only works for vardeclNodes to start
                 ((VarDeclNode)node).setOffset(startOffset);
-	        startOffset += 4;
-		totalOffset += 4;
+                startOffset += 4;
+                totalOffset += 4;
             }	    
-	}
-	return totalOffset;
+        }
+	    return totalOffset;
     }
     
     /**
@@ -208,6 +208,15 @@ class DeclListNode extends ASTnode {
     public void typeCheck() {
         for (DeclNode node : myDecls) {
             node.typeCheck();
+        }
+    }
+
+    /**
+     * codeGen
+     */
+    public void codeGen(){
+        for(DeclNode i : myDecls){
+            i.codeGen();
         }
     }
     
@@ -277,6 +286,13 @@ class FormalsListNode extends ASTnode {
                 it.next().unparse(p, indent);
             }
         } 
+    }
+
+    /**
+     * codeGen
+     */
+    public void codeGen(){
+
     }
 
     // list of kids (FormalDeclNodes)
@@ -423,6 +439,8 @@ abstract class DeclNode extends ASTnode {
      */
     abstract public SemSym nameAnalysis(SymTable symTab);
 
+    abstract public void codeGen();
+
     // default version of typeCheck for non-function decls
     public void typeCheck() { }
 }
@@ -512,7 +530,7 @@ class VarDeclNode extends DeclNode {
     }   
 
     public void setOffset(int offset){
-	myId.setOffset(offset);
+	    myId.setOffset(offset);
     } 
     
     public void unparse(PrintWriter p, int indent) {
@@ -521,6 +539,19 @@ class VarDeclNode extends DeclNode {
         p.print(" ");
         p.print(myId.name());
         p.println(";");
+    }
+
+    public void codeGen(){
+        boolean isLocal = myId.isLocal();
+        if (!isLocal){
+            Codegen.generate(".data");
+            Codegen.generate(".align", "2");
+            Codegen.generate("_" + myId.name() + ": .space 4");
+        }
+        else{
+
+        }
+        
     }
 
     // 3 kids
@@ -540,8 +571,8 @@ class FnDeclNode extends DeclNode {
         myId = id;
         myFormalsList = formalList;
         myBody = body;
-	if(id.name().equals("main")){
-	    isMainMethod = true;
+        if(id.name().equals("main")){
+            isMainMethod = true;
         }
     }
 
@@ -608,18 +639,31 @@ class FnDeclNode extends DeclNode {
      */
     public void typeCheck() {
         myBody.typeCheck(myType.type());
-	//-------------p6-----------
-	if(!isMainMethod){
-	     ErrMsg.fatal(0, 0,"No main function");
-	      isMainMethod = true; //so no repeat calls
-	}
+        //-------------p6-----------
+        if(!isMainMethod){
+            ErrMsg.fatal(0, 0,"No main function");
+            isMainMethod = true; //so no repeat calls
+        }
         int startOffset = 0; //modify this to change the start offset
-	int paramOffset = myFormalsList.setOffset(startOffset);//sets up params offsets
+        int paramOffset = myFormalsList.setOffset(startOffset);//sets up params offsets
         int varOffset = myBody.setOffset(startOffset + paramOffset);
-	//at the end startoffset = total offset for the functions vars
-	((FnSym)myId.sym()).setParamSize(paramOffset); 
-	((FnSym)myId.sym()).setVarSize(varOffset);
-	      
+        //at the end startoffset = total offset for the functions vars
+        ((FnSym)myId.sym()).setParamSize(paramOffset); 
+        ((FnSym)myId.sym()).setVarSize(varOffset);
+    }
+
+    public void codeGen(){
+        Codegen.generateLabeled(myId.getName(), "", "Generate function: " + myId.getName());
+        if(myId.getName().equals("main")){
+            Codegen.generateLabeled("__start", "", "");
+        }
+        Codegen.generateWithComment("", "Begin function preamble");
+        Codegen.genPush("$ra");
+        Codegen.genPush("$fp");
+        Codegen.generateWithComment("addu", "Set the FP", "$fp", "$sp", "8");
+        int size = ((FnSym)myId.sym()).getParamSize() + ((FnSym)myId.sym()).getVarSize();
+        Codegen.generateWithComment("subu", "Push space for locals", "$sp", "$sp", Integer.toString(size));
+        myBody.codeGen();
     }
         
     public void unparse(PrintWriter p, int indent) {
@@ -1519,7 +1563,11 @@ class IdNode extends ExpNode {
         myLineNum = lineNum;
         myCharNum = charNum;
         myStrVal = strVal;
-	isLocal = false;
+	    isLocal = false;
+    }
+
+    public boolean isLocal(){
+        return isLocal;
     }
 
     /**
@@ -1560,7 +1608,7 @@ class IdNode extends ExpNode {
      public void setOffset(int offset){
         if (mySym != null) {
             mySym.setOffset(offset);
-	    isLocal = true;
+	        isLocal = true;
         } 
         else {
             System.err.println("ID with null sym field in IdNode.typeCheck " + myStrVal);
