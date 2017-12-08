@@ -1,0 +1,9 @@
+
+int main(){
+    int a;
+    bool b;
+    a = 5;
+    return a;
+    
+}
+
