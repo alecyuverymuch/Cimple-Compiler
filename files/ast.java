@@ -325,6 +325,10 @@ class FnBodyNode extends ASTnode {
     public void typeCheck(Type retType) {
         myStmtList.typeCheck(retType);
     }    
+
+    public void codeGen(){
+
+    }
           
     public void unparse(PrintWriter p, int indent) {
         myDeclList.unparse(p, indent);
@@ -358,6 +362,10 @@ class StmtListNode extends ASTnode {
         for(StmtNode node : myStmts) {
             node.typeCheck(retType);
         }
+    }
+
+    public void codeGen(){
+
     }
     
     public void unparse(PrintWriter p, int indent) {
@@ -412,6 +420,10 @@ class ExpListNode extends ASTnode {
             System.err.println("unexpected NoSuchElementException in ExpListNode.typeCheck");
             System.exit(-1);
         }
+    }
+
+    public void codeGen(){
+
     }
     
     public void unparse(PrintWriter p, int indent) {
@@ -739,6 +751,10 @@ class FormalDeclNode extends DeclNode {
     public void setOffset(int offset){
 	myId.setOffset(offset);
     }  
+
+    public void codeGen(){
+
+    }
     
     public void unparse(PrintWriter p, int indent) {
         myType.unparse(p, 0);
@@ -799,7 +815,11 @@ class StructDeclNode extends DeclNode {
         }
         
         return null;
-    }    
+    }  
+    
+    public void codeGen(){
+        
+    }
     
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
