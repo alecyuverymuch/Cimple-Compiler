@@ -47,6 +47,7 @@ public class P6 {
 		try{
 			setInfile(args[0]);
 			setOutfile(args[1]);
+			Codegen.p = new PrintWriter(args[1]);
 		} catch(BadInfileException e){
             pukeAndDie(e.getMessage());			
 		} catch(BadOutfileException e){
@@ -149,7 +150,6 @@ public class P6 {
 		if (ErrMsg.getErr()) {  
 			return P6.RESULT_SYNTAX_ERROR;
 		}
-		Codegen.p = new PrintWriter(args[1]);
 		astRoot.codeGen();
 		
 		astRoot.unparse(outFile, 0);
