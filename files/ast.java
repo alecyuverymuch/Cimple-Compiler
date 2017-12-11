@@ -672,25 +672,25 @@ class FnDeclNode extends DeclNode {
             Codegen.genLabel("__start");
         }
         Codegen.generateWithComment("", "Begin function preamble");
-        Codegen.genPush("$ra");
-        Codegen.genPush("$fp");
-        Codegen.generateWithComment("addu", "Set the FP", "$fp", "$sp", "8");
+        Codegen.genPush(Codegen.RA);
+        Codegen.genPush(Codegen.FP);
+        Codegen.generateWithComment("addu", "Set the FP", Codegen.FP, Codegen.SP, "8");
         int size = ((FnSym)myId.sym()).getParamSize() + ((FnSym)myId.sym()).getVarSize();
         if (size > 0){
-            Codegen.generateWithComment("subu", "Push space for locals", "$sp", "$sp", Integer.toString(size));            
+            Codegen.generateWithComment("subu", "Push space for locals", Codegen.SP, Codegen.SP, Integer.toString(size));            
         }
         myBody.codeGen();
         Codegen.generateWithComment("", "Begin function epilogue");
         Codegen.genLabel(epilogueLabel);
-        Codegen.generateWithComment("lw", "load return address", "$ra", "0($fp)");
-        Codegen.generateWithComment("move", "hold the FP", "$t0", "$fp");
-        Codegen.generateWithComment("lw", "restore FP", "$fp", "-4($fp)");
-        Codegen.generateWithComment("move", "restore SP", "$sp", "$t0");
+        Codegen.generateWithComment("lw", "load return address", Codegen.RA, "0(Codegen.FP)");
+        Codegen.generateWithComment("move", "hold the FP", Codegen.T0, Codegen.FP);
+        Codegen.generateWithComment("lw", "restore FP", Codegen.FP, "-4(Codegen.FP)");
+        Codegen.generateWithComment("move", "restore SP", Codegen.SP, Codegen.T0);
         if (!myId.name().equals("main")){
-            Codegen.generateWithComment("jr", "return", "$ra");
+            Codegen.generateWithComment("jr", "return", Codegen.RA);
         }
         else{
-            Codegen.generateWithComment("li", "Exit the program", "$v0", "10");
+            Codegen.generateWithComment("li", "Exit the program", Codegen.V0, "10");
             Codegen.generate("syscall");
         }
     }
@@ -1135,13 +1135,13 @@ class WriteStmtNode extends StmtNode {
 
     public void codeGen(){
         myExp.codeGen();
-        Codegen.genPop("$a0");
+        Codegen.genPop(Codegen.A0);
         Type type = myExp.typeCheck();
         if (type.isIntType()){
-            Codegen.generateWithComment("li", "system call for printing integer", "$v0", "1");
+            Codegen.generateWithComment("li", "system call for printing integer", Codegen.V0, "1");
         }
         else if (type.isStringType()){
-            Codegen.generateWithComment("li", "system call for printing string", "$v0", "4");
+            Codegen.generateWithComment("li", "system call for printing string", Codegen.V0, "4");
         }
         Codegen.generate("syscall");
     }
@@ -1199,6 +1199,15 @@ class IfStmtNode extends StmtNode {
         }
         
         myStmtList.typeCheck(retType);
+    }
+
+    public void codeGen(){
+        String falseLabel = Codegen.nextLabel();
+        myExp.codeGen();
+        Codegen.genPop(Codegen.T0);
+        Codegen.generate("beq", Codegen.T0, Codegen.FALSE, falseLabel);
+        myStmtList.codeGen();
+        Codegen.genLabel(falseLabel);
     }
        
     public void unparse(PrintWriter p, int indent) {
@@ -1296,6 +1305,19 @@ class IfElseStmtNode extends StmtNode {
         p.println("}");        
     }
 
+    public void codeGen(){
+        String elseLabel = Codegen.nextLabel();
+        String doneLabel = Codegen.nextLabel();
+        myExp.codeGen();
+        Codegen.genPop(Codegen.T0);
+        Codegen.generate("beq", Codegen.T0, Codegen.FALSE, elseLabel);
+        myThenStmtList.codeGen();
+        Codegen.generate("j", doneLabel);
+        Codegen.genLabel(elseLabel);
+        myElseStmtList.codeGen();
+        Codegen.genLabel(doneLabel);
+    }
+
     // 5 kids
     private ExpNode myExp;
     private DeclListNode myThenDeclList;
@@ -1345,6 +1367,18 @@ class WhileStmtNode extends StmtNode {
         }
         
         myStmtList.typeCheck(retType);
+    }
+
+    public void codeGen(){
+        String loopLabel = Codegen.nextLabel();
+        String doneLabel = Codegen.nextLabel();
+        Codegen.genLabel(loopLabel);
+        myExp.codeGen();
+        Codegen.genPop(Codegen.T0);
+        Codegen.generate("beq", Codegen.T0, Codegen.FALSE, doneLabel);
+        myStmtList.codeGen();
+        Codegen.generate("j", loopLabel);
+        Codegen.genLabel(doneLabel);
     }
         
     public void unparse(PrintWriter p, int indent) {
@@ -1496,8 +1530,8 @@ class IntLitNode extends ExpNode {
     }
 
     public void codeGen(){
-        Codegen.generateWithComment("li", "int literal", "$t0", Integer.toString(myIntVal));
-        Codegen.genPush("$t0");
+        Codegen.generateWithComment("li", "int literal", Codegen.T0, Integer.toString(myIntVal));
+        Codegen.genPush(Codegen.T0);
     }
     
     public void unparse(PrintWriter p, int indent) {
@@ -1543,8 +1577,8 @@ class StringLitNode extends ExpNode {
         Codegen.generateLabeled(label, "", "");
         Codegen.generate(".asciiz " + myStrVal);
         Codegen.generate(".text");
-        Codegen.generate("la", "$t0", label);
-        Codegen.genPush("$t0");
+        Codegen.generate("la", Codegen.T0, label);
+        Codegen.genPush(Codegen.T0);
     }
         
     public void unparse(PrintWriter p, int indent) {
@@ -1584,8 +1618,8 @@ class TrueNode extends ExpNode {
     }
 
     public void codeGen(){
-        Codegen.generateWithComment("li", "true literal", "$t0", "1");
-        Codegen.genPush("$t0");
+        Codegen.generateWithComment("li", "true literal", Codegen.T0, Codegen.TRUE);
+        Codegen.genPush(Codegen.T0);
     }
         
     public void unparse(PrintWriter p, int indent) {
@@ -1624,8 +1658,8 @@ class FalseNode extends ExpNode {
     }
 
     public void codeGen(){
-        Codegen.generateWithComment("li", "false literal", "$t0", "0");
-        Codegen.genPush("$t0");
+        Codegen.generateWithComment("li", "false literal", Codegen.T0, Codegen.FALSE);
+        Codegen.genPush(Codegen.T0);
     }
         
     public void unparse(PrintWriter p, int indent) {
