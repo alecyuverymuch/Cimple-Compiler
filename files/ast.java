@@ -325,6 +325,7 @@ class FnBodyNode extends ASTnode {
     }    
 
     public void codeGen(){
+        Codegen.generateWithComment("", "Begin function body");
         myStmtList.codeGen();
     }
           
@@ -1538,7 +1539,7 @@ class StringLitNode extends ExpNode {
     public void codeGen(){
         Codegen.generateWithComment(".data", "string literal");
         String label = Codegen.nextLabel();
-        Codegen.generateLabeled(label, ".asciiz", myStrVal);
+        Codegen.generateLabeled(label, ".asciiz", "", myStrVal);
         Codegen.generate(".text");
         Codegen.generate("la", "$t0", label);
         Codegen.genPush("$t0");
