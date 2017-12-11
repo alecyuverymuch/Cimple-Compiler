@@ -666,6 +666,7 @@ class FnDeclNode extends DeclNode {
     }
 
     public void codeGen(){
+        String epilogueLabel = Codegen.nextLabel();
         Codegen.genLabel(myId.name(), "Generate function: " + myId.name());
         if(myId.name().equals("main")){
             Codegen.genLabel("__start");
@@ -680,7 +681,7 @@ class FnDeclNode extends DeclNode {
         }
         myBody.codeGen();
         Codegen.generateWithComment("", "Begin function epilogue");
-        Codegen.genLabel(Codegen.nextLabel());
+        Codegen.genLabel(epilogueLabel);
         Codegen.generateWithComment("lw", "load return address", "$ra", "0($fp)");
         Codegen.generateWithComment("move", "hold the FP", "$t0", "$fp");
         Codegen.generateWithComment("lw", "restore FP", "$fp", "-4($fp)");
