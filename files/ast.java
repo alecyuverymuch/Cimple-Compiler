@@ -325,7 +325,7 @@ class FnBodyNode extends ASTnode {
     }    
 
     public void codeGen(){
-
+        myStmtList.codeGen();
     }
           
     public void unparse(PrintWriter p, int indent) {
@@ -363,7 +363,9 @@ class StmtListNode extends ASTnode {
     }
 
     public void codeGen(){
-
+        for(StmtNode node : myStmts) {
+            node.codeGen();
+        }
     }
     
     public void unparse(PrintWriter p, int indent) {
@@ -939,6 +941,7 @@ class StructNode extends TypeNode {
 abstract class StmtNode extends ASTnode {
     abstract public void nameAnalysis(SymTable symTab);
     abstract public void typeCheck(Type retType);
+    public void codeGen(){};
 }
 
 class AssignStmtNode extends StmtNode {
