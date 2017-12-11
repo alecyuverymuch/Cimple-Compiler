@@ -1454,6 +1454,8 @@ abstract class ExpNode extends ASTnode {
      * Default version for nodes with no names
      */
     public void nameAnalysis(SymTable symTab) { }
+
+    public void codeGen(){}
     
     abstract public Type typeCheck();
     abstract public int lineNum();
