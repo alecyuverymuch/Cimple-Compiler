@@ -1474,6 +1474,11 @@ class IntLitNode extends ExpNode {
     public Type typeCheck() {
         return new IntType();
     }
+
+    public void codeGen(){
+        Codegen.generateWithComment("li", "int literal", "$t0", Integer.toString(myIntVal));
+        Codegen.genPush("$t0");
+    }
     
     public void unparse(PrintWriter p, int indent) {
         p.print(myIntVal);
@@ -1511,6 +1516,15 @@ class StringLitNode extends ExpNode {
     public Type typeCheck() {
         return new StringType();
     }
+
+    public void codeGen(){
+        Codegen.generateWithComment(".data", "string literal");
+        String label = Codegen.nextLabel();
+        Codegen.generateLabeled(label, ".asciiz", myStrVal);
+        Codegen.generate(".text");
+        Codegen.generate("la", "$t0", label);
+        Codegen.genPush("$t0");
+    }
         
     public void unparse(PrintWriter p, int indent) {
         p.print(myStrVal);
@@ -1547,6 +1561,11 @@ class TrueNode extends ExpNode {
     public Type typeCheck() {
         return new BoolType();
     }
+
+    public void codeGen(){
+        Codegen.generateWithComment("li", "true literal", "$t0", "1");
+        Codegen.genPush("$t0");
+    }
         
     public void unparse(PrintWriter p, int indent) {
         p.print("true");
@@ -1581,6 +1600,11 @@ class FalseNode extends ExpNode {
      */
     public Type typeCheck() {
         return new BoolType();
+    }
+
+    public void codeGen(){
+        Codegen.generateWithComment("li", "false literal", "$t0", "0");
+        Codegen.genPush("$t0");
     }
         
     public void unparse(PrintWriter p, int indent) {
