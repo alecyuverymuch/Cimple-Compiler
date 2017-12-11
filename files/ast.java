@@ -1080,6 +1080,11 @@ class ReadStmtNode extends StmtNode {
                          "Attempt to read a struct variable");
         }
     }
+
+    public void codeGen(){
+        Codegen.generateWithComment("li", "Read statement", Codegen.V0, "5");
+        Codegen.generate("syscall");
+    }
     
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
