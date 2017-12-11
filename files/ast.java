@@ -1540,7 +1540,7 @@ class StringLitNode extends ExpNode {
         Codegen.generateWithComment(".data", "string literal");
         String label = Codegen.nextLabel();
         Codegen.generateLabeled(label, "", "");
-        Codegen.generate(".asciiz" + myStrVal);
+        Codegen.generate(".asciiz " + myStrVal);
         Codegen.generate(".text");
         Codegen.generate("la", "$t0", label);
         Codegen.genPush("$t0");
