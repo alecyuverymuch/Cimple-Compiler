@@ -1715,6 +1715,9 @@ class IdNode extends ExpNode {
         }
         return null;
     }
+
+    public void codeGen(){
+    }
            
     public void unparse(PrintWriter p, int indent) {
         p.print(myStrVal);
@@ -1861,6 +1864,9 @@ class DotAccessExpNode extends ExpNode {
     public Type typeCheck() {
         return myId.typeCheck();
     }
+
+    public void codeGen(){
+    }
     
     public void unparse(PrintWriter p, int indent) {
         myLoc.unparse(p, 0);
@@ -1941,6 +1947,9 @@ class AssignNode extends ExpNode {
         
         return retType;
     }
+
+    public void codeGen(){
+    }
     
     public void unparse(PrintWriter p, int indent) {
         if (indent != -1)  p.print("(");
@@ -2018,6 +2027,9 @@ class CallExpNode extends ExpNode {
         myExpList.typeCheck(fnSym.getParamTypes());
         return fnSym.getReturnType();
     }
+
+    public void codeGen(){
+    }
         
     // ** unparse **
     public void unparse(PrintWriter p, int indent) {
@@ -2062,6 +2074,9 @@ abstract class UnaryExpNode extends ExpNode {
     public void nameAnalysis(SymTable symTab) {
         myExp.nameAnalysis(symTab);
     }
+
+    public void codeGen(){
+    }
     
     // one child
     protected ExpNode myExp;
@@ -2099,6 +2114,9 @@ abstract class BinaryExpNode extends ExpNode {
         myExp2.nameAnalysis(symTab);
     }
     
+    public void codeGen(){
+    }
+
     // two kids
     protected ExpNode myExp1;
     protected ExpNode myExp2;
