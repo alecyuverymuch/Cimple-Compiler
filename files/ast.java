@@ -1125,7 +1125,20 @@ class WriteStmtNode extends StmtNode {
             ErrMsg.fatal(myExp.lineNum(), myExp.charNum(),
                          "Attempt to write void");
         }
-	myType = myExp.typeCheck();
+	    myType = myExp.typeCheck();
+    }
+
+    public void codeGen(){
+        myExp.codeGen();
+        Codegen.genPop("$a0");
+        Type type = myExp.typeCheck();
+        if (type.isIntType()){
+            Codegen.generateWithComment("li", "system call for printing integer", "$v0", "1");
+        }
+        else if (type.isStringType()){
+            Codegen.generateWithComment("li", "system call for printing string", "$v0", "4");
+        }
+        Codegen.generate("syscall");
     }
         
     public void unparse(PrintWriter p, int indent) {
