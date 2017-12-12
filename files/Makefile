@@ -56,7 +56,7 @@ EmptySymTableException.class: EmptySymTableException.java
 # test
 #
 test:
-	java $(FLAGS) P6 hello.cimple hello.out
+	java $(FLAGS) P6 hello.cimple mips_code.s
 
 ###
 # clean
