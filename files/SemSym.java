@@ -7,6 +7,7 @@ import java.util.*;
 public class SemSym {
     private Type type;
     private int offset;
+    private boolean isLocal = false;
     
     public SemSym(Type type) {
         this.type = type;
@@ -27,6 +28,14 @@ public class SemSym {
     
     public String toString() {
         return type.toString();
+    }
+
+    public void setLocal(){
+        isLocal = true;
+    }
+
+    public boolean isLocal(){
+        return isLocal;
     }
 }
 

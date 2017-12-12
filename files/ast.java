@@ -1752,7 +1752,7 @@ class IdNode extends ExpNode {
     }    
 
     public boolean isLocal(){
-	return mySym.isLocal();
+	    return mySym.isLocal();
     }
 
     public void setOffset(int offset){
