@@ -1824,7 +1824,6 @@ class IdNode extends ExpNode {
     }
 
     public void codeGen(){
-        Codegen.generateWithComment("", "IDNODE!!!");
         if(!isLocal()){
             Codegen.generate("lw",Codegen.T0,("_" + myStrVal));
             Codegen.genPush(Codegen.T0);
