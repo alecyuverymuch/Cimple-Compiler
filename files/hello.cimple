@@ -12,7 +12,7 @@ bool func3(){
 bool func4(int x, int y, bool z){
     return x > y || z;
 }
-void main() {
+void func5() {
     int a;
     bool b;
     // Arithmatic
@@ -30,7 +30,11 @@ void main() {
     a++;
     x--;
     x = 2 + a * 4 / 2 - 2 * x / a - 2;
+    cout << x;
+    cout << "\n";
     a = 1 + a - func1() * func2(x - a) / 4;
+    cout << a;
+    cout << "\n";
     // Logic
     y = false;
     b = y;
@@ -39,7 +43,11 @@ void main() {
     b = false || y;
     y = !b;
     b = !y || true && b || !false;
+    cout << b;
+    cout << "\n";
     y = !true || b && !func3();
+    cout << y;
+    cout << "\n";
     // Equality
     y = 1 > 0;
     y = 1 < a;
@@ -47,13 +55,19 @@ void main() {
     b = a <= x;
     b = a == func1();
     b = func1() != func2(1 + 2);
+    cout << b;
+    cout << "\n";
     y = true == b;
     y = b == func4(a, x, b || false && func3());
+    cout << y;
+    cout << "\n";
     // Read and write
     cout << "Hello world!";
     cout << "\n";
     cout << 8;
+    cout << "\n";
     cout << x;
+    cout << "\n";
     cin >> a;
     cin >> b;
     // if, if else, and while
@@ -69,4 +83,20 @@ void main() {
     while(1 == func1() || y){
         b = 1 + 2 - func1() * 3 > x && false || !func3();
     }
+}
+void main(){
+    cout << func1();
+    cout << "\n";
+    x = 5;
+    cout << x;
+    cout << func2(x);
+    cout << "\n";
+    cout << func3();
+    cout << "\n";
+    y = false;
+    cout << y;
+    cout << "\n";
+    cout << func4(func1(), x + func2(x + 5), y || func3());
+    cout << "\n";
+    func5();
 }
