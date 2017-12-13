@@ -2325,7 +2325,8 @@ class NotNode extends UnaryExpNode {
         myExp.codeGen();
         Codegen.genPop(Codegen.T0);
         Codegen.generate("addu", Codegen.T0, Codegen.T0, "1");
-        Codegen.generate("div", Codegen.T0, "2");
+        Codegen.generate("li", Codegen.T1, "2");
+        Codegen.generate("div", Codegen.T0, Codegen.T1);
         Codegen.generate("mfhi", Codegen.T0);
         Codegen.genPush(Codegen.T0);
     }
@@ -2537,13 +2538,13 @@ class MinusNode extends ArithmeticExpNode {
     }
 
     public void codeGen(){
-	Codegen.generateWithComment("","Subtract Node");
-	myExp1.codeGen();
-	myExp2.codeGen();
-	Codegen.genPop(Codegen.T1);
-	Codegen.genPop(Codegen.T0);
-	Codegen.generate("subu", Codegen.T0,Codegen.T0,Codegen.T1);
-	Codegen.genPush(Codegen.T0);
+        Codegen.generateWithComment("","Subtract Node");
+        myExp1.codeGen();
+        myExp2.codeGen();
+        Codegen.genPop(Codegen.T1);
+        Codegen.genPop(Codegen.T0);
+        Codegen.generate("subu", Codegen.T0,Codegen.T0,Codegen.T1);
+        Codegen.genPush(Codegen.T0);
     }
 }
 
