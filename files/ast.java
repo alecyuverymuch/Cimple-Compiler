@@ -2038,18 +2038,18 @@ class AssignNode extends ExpNode {
     public void codeGen(){
 	
 	//myLhs //get memory location
-	IdNode id = ((IdNode)myLhs); //can only be IdNode since no structs
-	Codegen.generateWithComment("","Decl of var " + id.name());
-	myExp.codeGen(); //put value on stack
+        IdNode id = ((IdNode)myLhs); //can only be IdNode since no structs
+        Codegen.generateWithComment("","Assign of var " + id.name());
+        myExp.codeGen(); //put value on stack
 
-	if(id.isLocal()){
-	    Codegen.genPop(Codegen.T0);
-	    Codegen.generate("addu", Codegen.T1, Codegen.FP,id.sym().getOffset());
-	    Codegen.generate("sw", Codegen.T0, "0($t1)");
-	}else {
-	    Codegen.genPop(Codegen.T0);
-	    Codegen.generate("sw", Codegen.T0, "_" + id.name());
-	}	
+        if(id.isLocal()){
+            Codegen.genPop(Codegen.T0);
+            Codegen.generate("addu", Codegen.T1, Codegen.FP,id.sym().getOffset());
+            Codegen.generate("sw", Codegen.T0, "0($t1)");
+        }else {
+            Codegen.genPop(Codegen.T0);
+            Codegen.generate("sw", Codegen.T0, "_" + id.name());
+        }	
     }
     
     public void unparse(PrintWriter p, int indent) {

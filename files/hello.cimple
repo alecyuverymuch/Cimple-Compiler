@@ -27,6 +27,8 @@ void main() {
     x = 3 * 3;
     a = 4 / x;
     a = 5 / 5;
+    a++;
+    y--;
     x = 2 + a * 4 / 2 - 2 * x / a - 2;
     a = 1 + a - func1() * func2(x) / 4;
     // Logic
@@ -47,6 +49,24 @@ void main() {
     b = func1() != func2(x);
     y = true == b;
     y = b == func4(a, x, b);
+    // Read and write
     cout << "Hello world!";
     cout << "\n";
+    cout << 8;
+    cout << x;
+    cin >> a;
+    cin >> b;
+    // if, if else, and while
+    if (true){
+        x = 1;
+    }
+    if (1 > func1() + 2){
+        y = func3();
+    }
+    else{
+        cout << "Hi";
+    }
+    while(1 == func1() || x){
+        a = 1 + 2 - func1() * 3 > false || func3();
+    }
 }
