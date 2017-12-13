@@ -67,6 +67,6 @@ void main() {
         cout << "Hi";
     }
     while(1 == func1() || y){
-        a = 1 + 2 - func1() * 3 > x && false || !func3();
+        b = 1 + 2 - func1() * 3 > x && false || !func3();
     }
 }
