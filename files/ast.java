@@ -412,8 +412,7 @@ class ExpListNode extends ASTnode {
      * Given a symbol table symTab, process each exp in the list.
      */
     public void nameAnalysis(SymTable symTab) {
-        for (int i = myExps.size() - 1; i >= 0; i--) {
-            ExpNode node = myExps.get(i);
+        for (ExpNode node : myExps) {
             node.nameAnalysis(symTab);
         }
     }
@@ -443,7 +442,8 @@ class ExpListNode extends ASTnode {
     }
 
     public void codeGen(){
-        for (ExpNode e : myExps){
+        for (int i = myExps.size() - 1; i  >= 0; i--){
+            ExpNode e = myExps.get(i);
             e.codeGen();
         }
     }
