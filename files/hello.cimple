@@ -28,7 +28,7 @@ void main() {
     a = 4 / x;
     a = 5 / 5;
     a++;
-    y--;
+    x--;
     x = 2 + a * 4 / 2 - 2 * x / a - 2;
     a = 1 + a - func1() * func2(x) / 4;
     // Logic
@@ -66,7 +66,7 @@ void main() {
     else{
         cout << "Hi";
     }
-    while(1 == func1() || x){
-        a = 1 + 2 - func1() * 3 > false || func3();
+    while(1 == func1() || y){
+        a = 1 + 2 - func1() * 3 > x && false || !func3();
     }
 }
