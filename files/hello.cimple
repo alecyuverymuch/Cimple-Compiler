@@ -1,5 +1,50 @@
 int x;
+bool y;
 void main() {
+    int a;
+    bool b;
+    // Arithmatic
+    x = 0;
+    a = x;
+    a = func1();
+    x = a + 2;
+    x = 4 + 4;
+    a = x - 1;
+    a = 3 - 3;
+    x = 2 * a;
+    x = 3 * 3;
+    a = 4 / x;
+    a = 5 / 5;
+    x = 2 + a * 4 / 2 - 2 * x / a - 2;
+    a = 1 + a - func1() * func2(x) / 4;
+    // Logic
+    y = false;
+    b = y;
+    y = func3();
+    y = b && true;
+    b = false || y;
+    y = !b;
+    b = !y || true && b || !false;
+    y = !true || b && !func3();
+    // Equality
+    y = 1 > 0;
+    y = 1 < a;
+    y = 1 >= func1();
+    a = a <= x;
+    a = a == func1();
+    a = func1() != func2(x);
     cout << "Hello world!";
     cout << "\n";
+}
+int func1(){
+    return 5;
+}
+int func2(int x){
+    return x;
+}
+bool func3(){
+    return false;
+}
+bool func4(int x, int y, bool z){
+    return x > y || z;
 }
