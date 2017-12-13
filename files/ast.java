@@ -442,7 +442,7 @@ class ExpListNode extends ASTnode {
     }
 
     public void codeGen(){
-        for (ExpNode e : ExpListNode){
+        for (ExpNode e : myExps){
             e.codeGen();
         }
     }
@@ -1525,6 +1525,10 @@ class ReturnStmtNode extends StmtNode {
                 ErrMsg.fatal(0, 0, "Missing return value");                
             }
         }
+        
+    }
+
+    public void codeGen(){
         
     }
 
