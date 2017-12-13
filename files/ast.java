@@ -580,12 +580,9 @@ class VarDeclNode extends DeclNode {
             Codegen.generateWithComment(".data", "Declare global var");
             Codegen.generate(".align 2");
             Codegen.generate("_" + myId.name() + ": .space 4");
-	    Codegen.generate(".text");
+	        Codegen.generate(".text");
         }
-        else{
-	    
-        }
-        
+        // locals are generated in the function decl
     }
 
     // 3 kids
@@ -1529,7 +1526,7 @@ class ReturnStmtNode extends StmtNode {
     }
 
     public void codeGen(){
-        
+
     }
 
     public void codeGen(String returnLabel){
@@ -1827,6 +1824,7 @@ class IdNode extends ExpNode {
     }
 
     public void codeGen(){
+        Codegen.generateWithComment("", "IDNODE!!!");
         if(!isLocal()){
             Codegen.generate("lw",Codegen.T0,("_" + myStrVal));
             Codegen.genPush(Codegen.T0);
