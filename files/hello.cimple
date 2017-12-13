@@ -1,5 +1,17 @@
 int x;
 bool y;
+int func1(){
+    return 5;
+}
+int func2(int x){
+    return x;
+}
+bool func3(){
+    return false;
+}
+bool func4(int x, int y, bool z){
+    return x > y || z;
+}
 void main() {
     int a;
     bool b;
@@ -35,16 +47,4 @@ void main() {
     a = func1() != func2(x);
     cout << "Hello world!";
     cout << "\n";
-}
-int func1(){
-    return 5;
-}
-int func2(int x){
-    return x;
-}
-bool func3(){
-    return false;
-}
-bool func4(int x, int y, bool z){
-    return x > y || z;
 }
