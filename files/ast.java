@@ -301,6 +301,11 @@ class FnBodyNode extends ASTnode {
     public FnBodyNode(DeclListNode declList, StmtListNode stmtList) {
         myDeclList = declList;
         myStmtList = stmtList;
+        returnLabel = "";
+    }
+
+    public void setReturn(String label){
+        returnLabel = label;
     }
 
     /**
@@ -315,7 +320,7 @@ class FnBodyNode extends ASTnode {
     }    
 
     public int setOffset(int startOffset){
-	return myDeclList.setOffset(startOffset);
+	    return myDeclList.setOffset(startOffset);
     } 
     /**
      * typeCheck
@@ -325,8 +330,9 @@ class FnBodyNode extends ASTnode {
     }    
 
     public void codeGen(){
-	myDeclList.codeGen();
-	myStmtList.codeGen();
+        myDeclList.codeGen();
+        myStmtList.setReturn(returnLabel);
+	    myStmtList.codeGen();
     }
           
     public void unparse(PrintWriter p, int indent) {
@@ -337,11 +343,17 @@ class FnBodyNode extends ASTnode {
     // 2 kids
     private DeclListNode myDeclList;
     private StmtListNode myStmtList;
+    private String returnLabel;
 }
 
 class StmtListNode extends ASTnode {
     public StmtListNode(List<StmtNode> S) {
         myStmts = S;
+        returnLabel = "";
+    }
+
+    public void setReturn(String label){
+        returnLabel = label;
     }
 
     /**
@@ -364,8 +376,13 @@ class StmtListNode extends ASTnode {
     }
 
     public void codeGen(){
-	for(StmtNode node : myStmts) {
-            node.codeGen();
+	    for(StmtNode node : myStmts) {
+            if (node instanceof ReturnStmtNode){
+                ((ReturnStmtNode)node).codeGen(returnLabel);
+            }
+            else{
+                node.codeGen();
+            }
         }
     }
     
@@ -378,6 +395,7 @@ class StmtListNode extends ASTnode {
 
     // list of kids (StmtNodes)
     private List<StmtNode> myStmts;
+    private String returnLabel;
 }
 
 class ExpListNode extends ASTnode {
@@ -424,7 +442,9 @@ class ExpListNode extends ASTnode {
     }
 
     public void codeGen(){
-
+        for (ExpNode e : ExpListNode){
+            e.codeGen();
+        }
     }
     
     public void unparse(PrintWriter p, int indent) {
@@ -668,6 +688,7 @@ class FnDeclNode extends DeclNode {
 
     public void codeGen(){
         Codegen.genLabel(myId.name(), "Generate function: " + myId.name());
+        String returnLabel = Codegen.nextLabel();
         if(myId.name().equals("main")){
             Codegen.genLabel("__start");
         }
@@ -679,10 +700,11 @@ class FnDeclNode extends DeclNode {
         if (size > 0){
             Codegen.generateWithComment("subu", "Push space for locals", Codegen.SP, Codegen.SP, "" + size);            
         }
-	Codegen.generateWithComment("", "Begin function Body");
+        Codegen.generateWithComment("", "Begin function Body");
+        myBody.setReturn(returnLabel);
         myBody.codeGen();
         Codegen.generateWithComment("", "Begin function epilogue");
-        Codegen.genLabel(Codegen.nextLabel());
+        Codegen.genLabel(returnLabel);
         Codegen.generateWithComment("lw", "load return address", Codegen.RA, "0($fp)");
         Codegen.generateWithComment("move", "hold the FP", Codegen.T0, Codegen.FP);
         Codegen.generateWithComment("lw", "restore FP", Codegen.FP, "-4($fp)");
@@ -1451,7 +1473,7 @@ class CallStmtNode extends StmtNode {
     }
 
     public void codeGen(){
-
+        myCall.codeGen();
     }
     
     public void unparse(PrintWriter p, int indent) {
@@ -1506,8 +1528,12 @@ class ReturnStmtNode extends StmtNode {
         
     }
 
-    public void codeGen(){
-
+    public void codeGen(String returnLabel){
+        if (myExp != null){
+            myExp.codeGen();
+            Codegen.genPop(Codegen.V0);
+        }
+        Codegen.generate("j", returnLabel);
     }
     
     public void unparse(PrintWriter p, int indent) {
@@ -2130,7 +2156,11 @@ class CallExpNode extends ExpNode {
     }
 
     public void codeGen(){
-
+        if (myExpList.size() > 0){
+            myExpList.codeGen();
+        }
+        Codegen.generate("jal", myId.name());
+        Codegen.genPush(Codegen.V0);
     }
         
     // ** unparse **
