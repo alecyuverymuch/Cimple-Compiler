@@ -3,8 +3,8 @@ bool y;
 int func1(){
     return 5;
 }
-int func2(int x){
-    return x;
+int func2(int q){
+    return q;
 }
 bool func3(){
     return false;
