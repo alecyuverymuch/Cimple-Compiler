@@ -30,9 +30,11 @@ void func5() {
     a++;
     x--;
     x = 2 + a * 4 / 2 - 2 * x / a - 2;
+    cout << "start of func 5";
     cout << x;
     cout << "\n";
-    a = 1 + a - func1() * func2(x - a) / 4;
+    a = 1;
+    a = 2 + a - func1() * func2(x - a) / 4;
     cout << a;
     cout << "\n";
     // Logic
@@ -85,6 +87,8 @@ void func5() {
     }
 }
 void main(){
+    int w;
+    bool t;
     cout << func1();
     cout << "\n";
     x = 5;
@@ -99,4 +103,18 @@ void main(){
     cout << func4(func1(), x + func2(x + 5), y || func3());
     cout << "\n";
     func5();
+    w = 2;
+    w++;
+    cout << w;
+    w--;
+    cout << w;
+    cout << -w;
+    cin >> w;
+    cin >> t;
+    cout << w;
+    cout << t;
+    cout << "h" == "hello";
+    cout << "ee" == "ee";
+    return;
+    cout << "problem!";
 }

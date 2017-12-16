@@ -1029,8 +1029,10 @@ class PostIncStmtNode extends StmtNode {
     public void codeGen(){
         myExp.codeGen();
         Codegen.genPop(Codegen.T0);
-        Codegen.generate("addu", Codegen.T0, Codegen.T0, "1");
+	Codegen.generate("li", Codegen.T1,"1");
+        Codegen.generate("addu", Codegen.T0, Codegen.T0, Codegen.T1);
         Codegen.genPush(Codegen.T0);
+	((IdNode)myExp).genUpdate();
     }
         
     public void unparse(PrintWriter p, int indent) {
@@ -1071,8 +1073,10 @@ class PostDecStmtNode extends StmtNode {
     public void codeGen(){
         myExp.codeGen();
         Codegen.genPop(Codegen.T0);
-        Codegen.generate("subu", Codegen.T0, Codegen.T0, "1");
+	Codegen.generate("li", Codegen.T1,"1");
+        Codegen.generate("subu", Codegen.T0, Codegen.T0, Codegen.T1);
         Codegen.genPush(Codegen.T0);
+	((IdNode)myExp).genUpdate();
     }
         
     public void unparse(PrintWriter p, int indent) {
@@ -1132,7 +1136,7 @@ class ReadStmtNode extends StmtNode {
             Codegen.generate("sw", Codegen.V0, "_" + id.name());
         }
     }
-    
+
     public void unparse(PrintWriter p, int indent) {
         doIndent(p, indent);
         p.print("cin >> ");
@@ -1623,6 +1627,10 @@ class StringLitNode extends ExpNode {
     public int lineNum() {
         return myLineNum;
     }
+
+    public String val(){
+	return myStrVal;
+    }
     
     /**
      * Return the char number for this literal.
@@ -1832,6 +1840,17 @@ class IdNode extends ExpNode {
             Codegen.generate("lw",Codegen.T0, mySym.getOffset() +"($fp)");
             Codegen.genPush(Codegen.T0);
         }
+    }
+
+    public void genUpdate(){
+	if(isLocal()){
+            Codegen.genPop(Codegen.T0);
+            Codegen.generate("addu", Codegen.T1, Codegen.FP,sym().getOffset());
+            Codegen.generate("sw", Codegen.T0, "0($t1)");
+        }else {
+            Codegen.genPop(Codegen.T0);
+            Codegen.generate("sw", Codegen.T0, "_" + name());
+        }	
     }
            
     public void unparse(PrintWriter p, int indent) {
@@ -2688,23 +2707,36 @@ class EqualsNode extends EqualityExpNode {
 
     public void codeGen(){
 	Codegen.generateWithComment("","EQ Node");
-	myExp1.codeGen();
-	myExp2.codeGen();
-	Codegen.genPop(Codegen.T1);
-	Codegen.genPop(Codegen.T0);
-	String rEnd = Codegen.nextLabel();
-	String rTrue = Codegen.nextLabel();
-	Codegen.generate("beq", Codegen.T0, Codegen.T1,rTrue);
-	//false section
-	Codegen.generate("li", Codegen.T0, "0");
-	Codegen.genPush(Codegen.T0);
-	Codegen.generate("j", rEnd);
-	//true section 
-	Codegen.genLabel(rTrue);
-	Codegen.generate("li", Codegen.T0, "1");
-	Codegen.genPush(Codegen.T0);
-	//end label
-	Codegen.genLabel(rEnd);
+	if(myExp1 instanceof StringLitNode){
+	   String str1 = ((StringLitNode)myExp1).val();
+	   String str2 = ((StringLitNode)myExp2).val();
+	   if(str1.equals(str2)){
+		Codegen.generate("li", Codegen.T0, "1");
+	   	Codegen.genPush(Codegen.T0);
+	   }else{
+		Codegen.generate("li", Codegen.T0, "0");
+	   	Codegen.genPush(Codegen.T0);
+	   }
+	   
+	}else{
+	   myExp1.codeGen();
+	   myExp2.codeGen();
+	   Codegen.genPop(Codegen.T1);
+	   Codegen.genPop(Codegen.T0);
+	   String rEnd = Codegen.nextLabel();
+	   String rTrue = Codegen.nextLabel();
+	   Codegen.generate("beq", Codegen.T0, Codegen.T1,rTrue);
+	   //false section
+	   Codegen.generate("li", Codegen.T0, "0");
+	   Codegen.genPush(Codegen.T0);
+	   Codegen.generate("j", rEnd);
+	   //true section 
+	   Codegen.genLabel(rTrue);
+	   Codegen.generate("li", Codegen.T0, "1");
+	   Codegen.genPush(Codegen.T0);
+	   //end label
+	   Codegen.genLabel(rEnd);
+	}
     }
 }
 
